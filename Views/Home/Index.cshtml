@@ -1,0 +1,42 @@
+﻿@model IEnumerable<PruebaFiltros.Models.CP.Registro>
+
+@{
+    ViewData["Title"] = "Home Page";
+    List<SelectListItem> LstICombo = (List<SelectListItem>)ViewBag.LstICombo;
+}
+
+<div>
+    
+    @using (Html.BeginForm("ExportarRegistrosEmpresa", "Home", FormMethod.Post))
+        {
+            <p>
+            <input type="text" id="empresa" name="empresa" />
+            <input type="submit" value="Descargar" />
+            </p>
+        }
+        <table class="tab-content">
+            <tr>
+            <th>Fecha</th>
+            <th>Zona</th>
+            <th>Sentido</th>
+            <th>Persona</th>
+            <th>Patente</th>
+            <th>Tipo de actor</th>
+            <th>Ubicacion</th>
+            <th>Empresa</th>
+            </tr>
+            <tr>
+            @foreach (var item in Model)
+            {
+                <td>@item.Fecha</td>
+                <td>@item.Zona.Nombre</td>
+                <td>@item.Sentido.Direccion</td>
+                <td>@item.Persona.Nombres</td>
+                <td>@item.Patente.PatenteDigitos</td>
+                <td>@item.TipoActor.Tipo</td>
+                <td>@item.Ubicacion.Nombre</td>
+                <td> @item.Zona.Empresa</td>
+            }
+            </tr>
+      </table>
+</div>
