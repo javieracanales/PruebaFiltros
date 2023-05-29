@@ -188,7 +188,7 @@ namespace PruebaFiltros.Controllers
             {
                 List<Registro> LstRegistroFiltro = await _context.Registros.Include(r=>r.Zona).Include(r=>r.Sentido).
                     Include(r=>r.Patente).Include(r=>r.Persona).Include(r=>r.TipoActor).Include(r=>r.Ubicacion)
-                    .Where(r => r.TipoActor.Tipo == actor).ToListAsync();
+                    .Where(r => r.TipoActor.Tipo.Contains(actor)).ToListAsync();
                 var DatosFiltro = ToExcelActor(LstRegistroFiltro);
                 return File(DatosFiltro, "application/vnd.ms-excel", "Registros por fecha requerida, Fecha de descarga: " + System.DateTime.Now.ToString("dd/MM/yyyy") + ".xlsx");
             }
@@ -345,9 +345,9 @@ namespace PruebaFiltros.Controllers
         //filtro empresas
 
         [HttpPost]
-        public async Task<FileResult?> ExportarRegistrosEmpresa(string empresa)
+        public async Task<FileResult?> ExportarRegistrosEmpresa(int empresa)
         {
-            if (!string.IsNullOrEmpty(empresa))
+            if (empresa != 0)
             {
                 List<Registro> LstRegistroFiltro = await (from r in _context.Registros
                                                           join
@@ -364,7 +364,7 @@ namespace PruebaFiltros.Controllers
                           ta in _context.TiposActores on r.TipoActorId equals ta.IdTipoActor
                                                           join
                           u in _context.Ubicaciones on r.UbicacionId equals u.IdUbicacion
-                                                          where r.Zona.Empresa.Nombre == empresa
+                                                          where r.Zona.EmpresaId == empresa
                                                           select new Registro()
                                                           {
                                                               IdRegistro = r.IdRegistro,
@@ -377,7 +377,7 @@ namespace PruebaFiltros.Controllers
                                                               Ubicacion = u,
                                                           }).ToListAsync();
                 var DatosFiltro = ToExcelEmpresa(LstRegistroFiltro);
-                return File(DatosFiltro, "application/vnd.ms-excel", "Registros por fecha requerida, Fecha de descarga: " + System.DateTime.Now.ToString("dd/MM/yyyy") + ".xlsx");
+                return File(DatosFiltro, "application/vnd.ms-excel", "Registros por Empresa requerida, Fecha de descarga: " + System.DateTime.Now.ToString("dd/MM/yyyy") + ".xlsx");
             }
             return null;
 
